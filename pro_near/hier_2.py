@@ -3,11 +3,11 @@
 Sample command:
 FOR MARS
 
-python3.8 hierarchical_search.py --algorithm astar-near --exp_name mars_an --trial 1 \
+python3.8 hier_2.py --algorithm astar-near --exp_name mars_an --trial 1 \
 --train_data ../near_code_7keypoints/data/MARS_data/mars_all_features_train_1.npz,../near_code_7keypoints/data/MARS_data/mars_all_features_train_2.npz \
 --valid_data ../near_code_7keypoints/data/MARS_data/mars_all_features_val.npz --test_data ../near_code_7keypoints/data/MARS_data/mars_all_features_test.npz \
 --train_labels "sniff" --input_type "list" --output_type "list" --input_size 316 --output_size 2 --num_labels 1 --lossfxn "crossentropy" \
---normalize --max_depth 3 --max_num_units 4 --min_num_units 4 --max_num_children 3 --learning_rate 0.001 --neural_epochs 4 --symbolic_epochs 4 \
+--normalize --max_depth 3 --max_num_units 4 --min_num_units 4 --max_num_children 6 --learning_rate 0.001 --neural_epochs 6 --symbolic_epochs 15 \
 --class_weights "0.3,0.7" --base_program_name results/mars_an_astar-near_1_882748/fullprogram --hole_node_ind -1 --batch_size 256
 
 FOR BASKETBALL
@@ -137,7 +137,7 @@ def parse_args():
                         " This is ignored if validation set is provided using valid_data and valid_labels.")
     parser.add_argument('--normalize', action='store_true', required=False, default=False,
                         help='whether or not to normalize the data')
-    parser.add_argument('--batch_size', type=int, required=False, default=50,
+    parser.add_argument('--batch_size', type=int, required=False, default=128,
                         help="batch size for training set")
     parser.add_argument('-lr', '--learning_rate', type=float, required=False, default=0.02,
                         help="learning rate")
@@ -203,6 +203,7 @@ class Subtree_search():
 
     def __init__(self, b_prog, **kwargs):
         self.base_program_name = b_prog
+        print(self.base_program_name)
         self.__dict__.update(kwargs)
         if torch.cuda.is_available():
             self.device = 'cuda:0'
@@ -291,6 +292,7 @@ class Subtree_search():
         # log_and_print("Base program performance:")
         # self.evaluate_final()
         self.hole_node_ind = -1
+        self.hole_node_ind %= len(l)
         # self.neural_h()
         self.hole_node = l[self.hole_node_ind]
         log_and_print("Node selected: %d" % self.hole_node_ind)
@@ -300,12 +302,15 @@ class Subtree_search():
 
         #run near
         i=0
-        self.run_near(i)
+        self.score = self.run_near(i)
+
+        
 
 
             
 
-        
+    def get_final_score(self):
+        return self.score
             
     def load_base_program(self):
         print("Loading %s" % self.base_program_name)
@@ -439,6 +444,8 @@ class Subtree_search():
         
 
         # Initialize program graph starting from trained NN
+        print("bp name")
+        print(self.base_program_name)
         program_graph = ProgramGraph(DSL_DICT, CUSTOM_EDGE_COSTS, near_input_type, near_output_type, near_input_size, near_output_size,
             self.max_num_units, self.min_num_units, self.max_num_children, self.max_depth, self.penalty, ite_beta=self.ite_beta)
 
@@ -485,7 +492,7 @@ class Subtree_search():
         change_key(base_program.submodules, [], self.hole_node_ind, best_program.submodules["program"])
         pickle.dump(base_program, open(self.full_path, "wb"))
 
-
+        final_score = test_set_eval(base_program, self.testset, self.output_type, self.output_size, self.num_labels, device=self.device, verbose=False)
         # Save parameters
         # if num_iter = 0:
         f = open(os.path.join(self.save_path, "parameters_%d.txt"%num_iter),"w")
@@ -498,6 +505,7 @@ class Subtree_search():
         for p in parameters:
             f.write( p + ': ' + str(self.__dict__[p]) + '\n' )
         f.close()
+        return final_score
 
     def process_batch(self, program, batch, output_type, output_size, device='cpu'):
         # batch_input = [torch.tensor(traj) for traj in batch]
@@ -538,8 +546,11 @@ if __name__ == '__main__':
     # for base_prog in glob.glob('../near_code_7keypoints/results/mars_baby_an_enumeration_001/**_*.p'): #TODO
         # print(base_prog)
     progs = pickle.load(open('../near_code_7keypoints/symb_trained.pkl','rb'))
+    scores=[]
     for i in range(len(progs)):
         base_prog = 'program_%d.p'%i
         pickle.dump(progs[i],open(base_prog,"wb"))
         search_instance = Subtree_search(base_prog[:-2], **vars(args))
-
+        scores.append(search_instance.get_final_score())
+    np.save('scores.npy',np.array(scores))
+        

@@ -20,6 +20,7 @@ def test_set_eval(program, testset, output_type, output_size, num_labels, device
         metric, additional_params = label_correctness(predicted_vals, true_vals, num_labels=num_labels)
     log_and_print("F1 score achieved is {:.4f}".format(1 - metric))
     log_and_print("Additional performance parameters: {}\n".format(additional_params))
+    return (1-metric)
 
 def parse_args():
     parser = argparse.ArgumentParser()
