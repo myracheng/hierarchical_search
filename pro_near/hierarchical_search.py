@@ -1,5 +1,8 @@
 
 """
+gnn_h uses graph neural network as heuristic
+neural_h uses small RNN as heuristic
+
 Sample command:
 FOR MARS
 
