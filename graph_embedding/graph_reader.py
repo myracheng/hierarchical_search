@@ -203,29 +203,21 @@ def divide_datasets_regression(graphs, scores,batch_size):
     va_idx = []
     te_idx = []
     
-    # idx = [i for i, x in enumerate(scores)]
-    # tr_idx += sorted(np.random.choice(idx, int(0.8*len(idx)), replace=False))
-    # va_idx += sorted(np.random.choice([x for x in idx if x not in tr_idx], int(0.1*len(idx)), replace=False))
-    # te_idx += sorted(np.random.choice([x for x in idx if x not in tr_idx and x not in va_idx], int(0.1*len(idx)), replace=False))
+    idx = [i for i, x in enumerate(scores)]
+    tr_idx += sorted(np.random.choice(idx, int(0.8*len(idx)), replace=False))
+    va_idx += sorted(np.random.choice([x for x in idx if x not in tr_idx], int(0.1*len(idx)), replace=False))
+    te_idx += sorted(np.random.choice([x for x in idx if x not in tr_idx and x not in va_idx], int(0.1*len(idx)), replace=False))
 
     
     ## segmenting out first class
-    # idx = [i for i, x in enumerate(scores)][21:]
-    # # idx = [i for i, x in enumerate(scores)][:-21] #exclude the new ones
+    # idx = list(range(31))
+    # idx.extend(list(range((31+88),len(graphs))))
+    # # print(idx)
     # tr_idx += sorted(np.random.choice(idx, int(0.8*len(idx)), replace=False))
     # va_idx += sorted(np.random.choice([x for x in idx if x not in tr_idx], int(0.2*len(idx)), replace=False))
-    # te_idx = list(range(21))
-    # # print(len(te_idx))
-    # print((scores))
-    # print(scores)
-    idx = list(range(31))
-    idx.extend(list(range((31+88),len(graphs))))
-    # print(idx)
-    tr_idx += sorted(np.random.choice(idx, int(0.8*len(idx)), replace=False))
-    va_idx += sorted(np.random.choice([x for x in idx if x not in tr_idx], int(0.2*len(idx)), replace=False))
 
-    te_idx = list(range(31,31+88))
-    # print(len(te_idx))
+    # te_idx = list(range(31,31+88))
+    # # print(len(te_idx))
 
     
     if len(tr_idx) % batch_size == 1:

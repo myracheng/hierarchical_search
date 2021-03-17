@@ -123,7 +123,7 @@ def main():
     g, h_t, e = g_tuple
     
     print('\tStatistics')
-    print(type(data_train))
+    # print(type(data_train))
     stat_dict = datasets.utils.get_graph_stats(data_train, ['degrees'])
 
     # Data Loader

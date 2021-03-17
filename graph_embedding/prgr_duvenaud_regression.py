@@ -22,6 +22,7 @@ import os
 import sys
 
 # Our Modules
+import dsl
 reader_folder = os.path.realpath(os.path.abspath('..'))
 if reader_folder not in sys.path:
     sys.path.append(reader_folder)
@@ -118,7 +119,7 @@ def main():
     # Select one graph
     g_tuple, l = data_train[6]
 # 
-    print(eval_single_graph(data_train[6]))
+    # print(eval_single_graph(data_train[6]))
 
 
     g, h_t, e = g_tuple
@@ -420,9 +421,9 @@ def validate(val_loader, model, criterion, evaluation, logger=None):
 
         # Prepare input data
         target = torch.squeeze(target)
-        print(type(g))
-        print(type(h))
-        print(type(e))
+        # print(type(g))
+        # print(type(h))
+        # print(type(e))
         if args.cuda:
             g, h, e, target = g.cuda(), h.cuda(), e.cuda(), target.cuda()
         g, h, e, target = Variable(g), Variable(h), Variable(e), Variable(target)
