@@ -163,93 +163,20 @@ class ProgramGraph(object):
         else:
             candidate = functionclass(input_size, output_size, num_units)
         return candidate
-
-    def get_bball_prog2(self, current_node):
-        queue_fns = [dsl.running_averages.RunningAverageWindow13Function,dsl.MultiplyFunction,dsl.MultiplyFunction,
-                        dsl.basketball.BBallOffenseBallDistSelection,dsl.basketball.BBallOffenseBhDistSelection,
-                        dsl.basketball.BBallDefenseBhDistSelection]
-                        
-        # Window13Avg(Multiply(Multiply(Multiply(Multiply(Multiply(BhOneHot,OffenseBhDist), ScreenBhDist),ScreenPaint),BallPaint),DefenseBhDist)
-        all_children = []
-        
-        i = 0
-        # curr = current_node
-        temp_fnclass = queue_fns[i]
-        for submod, functionclass in current_node.program.submodules.items():
-            child_num_units = self.min_num_units
-            child_candidate = self.construct_specific_candidate(temp_fnclass, functionclass.input_type,
-                                                                    functionclass.output_type,
-                                                                    functionclass.input_size,
-                                                                    functionclass.output_size,
-                                                                    child_num_units)
-
-            current_node.program.submodules['program'] = child_candidate #add window13avg
-
-            print(functionclass)
-            print(functionclass.input_size)
-            print(functionclass.output_size)
-        # curr = child_candidate
-        # functionclass = type(current_node.program.submodules['program'])
-
-        i += 1
-        temp_fnclass = queue_fns[i]
-        prev_submods = []
-        for submod, functionclass in current_node.program.submodules['program'].submodules.items():
+    
+    def get_bball_prog_mini(self,current_node):
+    #construct functions
+        # queue_fns = [dsl.MapFunction,dsl.Multiply01,dsl.basketball.BBallOffenseBallDistSelection,
+        #     dsl.basketball.BBallDefenseBhDistSelection]
             
-            child_candidate = self.construct_specific_candidate(temp_fnclass, functionclass.input_type,
-                                                                    functionclass.output_type,
-                                                                    functionclass.input_size,
-                                                                    functionclass.output_size,
-                                                                    child_num_units)
-            current_node.program.submodules['program'].submodules[submod] = child_candidate #add window13avg
-            prev_submods.append(submod)
-            print(functionclass)
-            print(functionclass.input_size)
-            print(functionclass.output_size)
-        new_submods = {}
-        for p in prev_submods:
-            new_submods[p] = current_node.program.submodules['program'].submodules[p].submodules.keys()
-            for submod, functionclass in current_node.program.submodules['program'].submodules[p].submodules.items():
-                i += 1
-                temp_fnclass = queue_fns[i]
-                child_candidate = self.construct_specific_candidate(temp_fnclass, functionclass.input_type,
-                                                                        functionclass.output_type,
-                                                                        functionclass.input_size,
-                                                                        functionclass.output_size,
-                                                                        child_num_units)
-                # if child_
-                current_node.program.submodules['program'].submodules[p].submodules[submod] = child_candidate
-                print(functionclass)
-                print(functionclass.input_size)
-                print(functionclass.output_size)
-        # prev_submods = new_submods 
-        # new_submods = []
-        for p in prev_submods:
-            for s in new_submods[p]:
-                for submod, functionclass in current_node.program.submodules['program'].submodules[p].submodules[s].submodules.items():
-                    i += 1
-                    temp_fnclass = queue_fns[i]
-                    child_candidate = self.construct_specific_candidate(temp_fnclass, functionclass.input_type,
-                                                                            functionclass.output_type,
-                                                                            functionclass.input_size,
-                                                                            functionclass.output_size,
-                                                                            child_num_units)
-                    current_node.program.submodules['program'].submodules[p].submodules[s].submodules[submod] = child_candidate
-                    print(functionclass)
-                    print(functionclass.input_size)
-                    print(functionclass.output_size)
-        return [current_node]
-
-    def get_bball_prog(self, current_node):
-
-        #construct functions
-        queue_fns = [dsl.MapPrefixesFunction,dsl.running_averages.RunningAverageWindow13Function,dsl.MultiplyFunction,dsl.MultiplyFunction,
-                        dsl.basketball.BBallOffenseBallDistSelection,dsl.basketball.BBallOffenseBhDistSelection,
+        # queue_fns = [dsl.MapFunction,dsl.MultiplyFunction,
+        #                 dsl.basketball.BBallOffenseBallDistSelection,dsl.basketball.BBallOffenseBhDistSelection]
+        queue_fns = [dsl.MapFunction,
                         dsl.basketball.BBallDefenseBhDistSelection]
-        input_types = ["list","list","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom"]
+        input_types = ["list","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom"]
         output_types = ["list"]
         output_types.extend(["atom"] * len(queue_fns))
-        output_types.append
+
         child_num_units = self.min_num_units
         all_children = []
         for i,f in enumerate(queue_fns):
@@ -258,10 +185,79 @@ class ProgramGraph(object):
                                                                     51,
                                                                     2,
                                                                     child_num_units)
-            print(child_candidate)
+            # print(child_candidate)
             all_children.append(child_candidate)
-            for submod, functionclass in child_candidate.submodules.items():
-                print(submod)
+            # for submod, functionclass in child_candidate.submodules.items():
+                # print(submod)
+        running_ind = 1
+        
+        #populate submodules
+        for f in all_children:
+            for submod, functionclass in f.submodules.items():
+                # print(submod)
+                f.submodules[submod] = all_children[running_ind]
+                # print(submod)
+                # print(running_ind)
+                running_ind += 1
+
+        current_node.program.submodules['program'] = all_children[0]
+
+        return current_node
+
+    def get_bball_prog(self, current_node):
+
+        #construct functions
+        # queue_fns = [dsl.MapPrefixesFunction,dsl.running_averages.RunningAverageWindow13Function,dsl.Multiply01,dsl.Multiply01,
+        #                 dsl.basketball.BBallOffenseBallDistSelection,dsl.basketball.BBallOffenseBhDistSelection,
+        #                 dsl.basketball.BBallDefenseBhDistSelection]
+        # input_types = ["list","list","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom","atom"]
+        # output_types = ["list"]
+        # output_types.extend(["atom"] * len(queue_fns))
+
+        # queue_fns = [dsl.MapPrefixesFunction,dsl.running_averages.RunningAverageWindow13Function,dsl.Multiply01,dsl.Multiply01,
+        #             dsl.Multiply01,dsl.Multiply01,dsl.Multiply01,
+        #                 dsl.basketball.BBallOffenseBhDistSelection,
+        #                 dsl.basketball.BBallDefenseBhDistSelection,dsl.basketball.BBallBhOneHotSelection,
+        #                 dsl.basketball.BBallScreenBhDistSelection,
+        #                 dsl.basketball.BBallScreenPaintSelection,
+        #                 dsl.basketball.BBallBallPaintSelection]
+        # input_types = ["list","list"]
+        # input_types.extend(["atom"] * len(queue_fns))
+        # output_types = ["list"]
+        # output_types.extend(["atom"] * len(queue_fns))
+        
+        # Softmax(Window13Avg(BhOneHot))
+        # print("hi")
+        queue_fns = [dsl.MultiplyFunction,dsl.SoftmaxFunction,dsl.running_averages.RunningAverageWindow13Function,
+            
+                        dsl.running_averages.RunningAverageWindow13Function
+                        ,dsl.Multiply01,dsl.basketball.BBallBhOneHotSelection,dsl.Multiply01,
+                    dsl.Multiply01,dsl.Multiply01,dsl.Multiply01,
+                        dsl.basketball.BBallOffenseBhDistSelection,
+                        dsl.basketball.BBallDefenseBhDistSelection,dsl.basketball.BBallBhOneHotSelection,
+                        dsl.basketball.BBallScreenBhDistSelection,
+                        dsl.basketball.BBallScreenPaintSelection,
+                        dsl.basketball.BBallBallPaintSelection,]
+        input_types = ["list","atom","list","atom","list"]
+        input_types.extend(["atom"] * len(queue_fns))
+        # input_types[len(queue_fns)-2] = "list"
+        output_types = ["atom"]
+        output_types.extend(["atom"] * len(queue_fns))
+        
+
+
+        child_num_units = self.min_num_units
+        all_children = []
+        for i,f in enumerate(queue_fns):
+            child_candidate = self.construct_specific_candidate(f, input_types[i],
+                                                                    output_types[i],
+                                                                    51,
+                                                                    2,
+                                                                    child_num_units)
+            # print(child_candidate)
+            all_children.append(child_candidate)
+            # for submod, functionclass in child_candidate.submodules.items():
+                # print(submod)
         running_ind = 1
 
         #populate submodules
@@ -269,6 +265,8 @@ class ProgramGraph(object):
             for submod, functionclass in f.submodules.items():
                 # print(submod)
                 f.submodules[submod] = all_children[running_ind]
+                # print(submod)
+                # print(running_ind)
                 running_ind += 1
 
         current_node.program.submodules['program'] = all_children[0]

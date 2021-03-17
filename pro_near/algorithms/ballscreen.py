@@ -19,7 +19,7 @@ class BALLSCREEN(ProgramLearningAlgorithm):
         log_and_print("Training RNN baseline with {} LSTM units ...".format(graph.max_num_units))
         current = copy.deepcopy(graph.root_node)
 
-        child_node = graph.get_bball_prog(current)
+        child_node = graph.get_bball_prog_mini(current)
         log_and_print("Training child program: {}".format(print_program(child_node.program, ignore_constants=(not verbose))))
                 # is_neural = not graph.is_fully_symbolic(child_node.program) #mcheng is not complete
                 # child_node.score, l, m = execute_and_train_with_full(base_program_name, hole_node_ind, child_node.program, validset, trainset, train_config, 

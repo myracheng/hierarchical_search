@@ -204,7 +204,7 @@ if __name__ == '__main__':
     else:
         class_weights = torch.tensor([float(w) for w in args.class_weights.split(',')])
         if args.lossfxn == "crossentropy":
-            lossfxn = nn.CrossEntropyLoss(weight = class_weights)
+            lossfxn = nn.BCELoss(weight = class_weights)
         elif args.lossfxn == "bcelogits":
             lossfxn = nn.BCEWithLogitsLoss(weight = class_weights)
 

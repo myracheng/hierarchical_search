@@ -40,9 +40,18 @@ class ASTAR_NEAR(ProgramLearningAlgorithm):
             log_and_print("Current depth of program is {}".format(current.depth))
             log_and_print("Creating children for current node/program")
             children_nodes = graph.get_all_children(current)
+            # for child in children_nodes:
+            #     print(child.gnn_score)
             # prune if more than self.max_num_children
             if len(children_nodes) > graph.max_num_children:
-                children_nodes = random.sample(children_nodes, k=graph.max_num_children)  # sample without replacement
+                print("sort")
+                children_nodes.sort(key=lambda x: x.gnn_score, reverse=True)
+                children_nodes = children_nodes[:graph.max_num_children]
+                # children_node = sorted(children_nodes, key=lambda x: x.gnn_score, reverse=False) #highest score first
+            for child in children_nodes:
+                print(child.gnn_score)
+            # if len(children_nodes) > graph.max_num_children:
+            #     children_nodes = random.sample(children_nodes, k=graph.max_num_children)  # sample without replacement
             log_and_print("{} total children to train for current node".format(len(children_nodes)))
 
             for child_node in children_nodes:

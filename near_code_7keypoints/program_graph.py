@@ -1,10 +1,14 @@
 import copy
 import dsl
+import sys
+sys.path.append("../graph_embedding")
+from prgr_duvenaud_regression import eval_single_graph
+import networkx as nx
 
 
 class ProgramNode(object):
 
-    def __init__(self, program, score, parent, depth, cost, order):
+    def __init__(self, program, score, parent, depth, cost, order,gnn_score=0):
         self.score = score
         self.program = program
         self.children = []
@@ -12,6 +16,9 @@ class ProgramNode(object):
         self.depth = depth
         self.cost = cost
         self.order = order
+        self.gnn_score = gnn_score
+
+
 
 
 class ProgramGraph(object):
@@ -115,7 +122,20 @@ class ProgramGraph(object):
         num_units = max(int(self.max_num_units*(0.5**(depth-1))), self.min_num_units)
         return num_units
 
-    
+    def save_to_tree(self,d, G):
+        for key,val in d.items(): 
+            # G.add_node
+            G.add_nodes_from([(val, {"props": val})])
+            try:
+                if val.submodules is not None:
+                    kids = val.submodules.values()
+                    for k in kids:
+                        G.add_node(k)
+                        G.add_edge(val, k)
+                    self.save_to_tree(val.submodules,G) 
+            except AttributeError:
+                continue
+
     def get_all_children(self, current_node, in_enumeration=False):
         all_children = []
         child_depth = current_node.depth + 1
@@ -142,6 +162,10 @@ class ProgramGraph(object):
                             continue
                         # if yes, compute costs and add to list of children
                         child_node.cost = current_node.cost + self.compute_edge_cost(child_candidate)
+                        data = child_node.program.submodules  
+                        G = nx.Graph()
+                        self.save_to_tree(data, G)
+                        child_node.gnn_score = eval_single_graph(G).cpu().detach().numpy()[0]
                         all_children.append(child_node)
                         # if len(all_children) >= self.max_num_children and not in_enumeration:
                         #     return all_children

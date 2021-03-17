@@ -188,7 +188,20 @@ class SimpleITE(ITE): #this is the base one?
     def __init__(self, input_type, output_type, input_size, output_size, num_units, eval_function=None, function1=None, function2=None, beta=1.0):
         super().__init__(input_type, output_type, input_size, output_size, num_units, 
             eval_function=eval_function, function1=function1, function2=function2, beta=beta, name="SimpleITE", simple=True)
-        
+
+class SoftmaxFunction(LibraryFunction):
+
+    def __init__(self, input_size, output_size, num_units, function1=None):
+        if function1 is None:
+            function1 = init_neural_function("atom", "atom", input_size, output_size, num_units)
+        submodules = { "function1" : function1,}
+        super().__init__(submodules, "atom", "atom", input_size, output_size, num_units, name="Softmax")
+
+    def execute_on_batch(self, batch, batch_lens=None):
+        assert len(batch.size()) == 2
+        predicted_function1 = self.submodules["function1"].execute_on_batch(batch)
+        return torch.nn.functional.softmax(predicted_function1).data
+
 class MultiplyFunction(LibraryFunction):
 
     def __init__(self, input_size, output_size, num_units, function1=None, function2=None):
@@ -202,8 +215,31 @@ class MultiplyFunction(LibraryFunction):
     def execute_on_batch(self, batch, batch_lens=None):
         assert len(batch.size()) == 2
         predicted_function1 = self.submodules["function1"].execute_on_batch(batch)
+       
+
         predicted_function2 = self.submodules["function2"].execute_on_batch(batch)
         return predicted_function1 * predicted_function2
+
+class Multiply01(LibraryFunction): #sigmoid
+    def __init__(self, input_size, output_size, num_units, function1=None, function2=None):
+        if function1 is None:
+            function1 = init_neural_function("atom", "atom", input_size, output_size, num_units)
+        if function2 is None:
+            function2 = init_neural_function("atom", "atom", input_size, output_size, num_units)
+        submodules = { "function1" : function1, "function2" : function2 }
+        super().__init__(submodules, "atom", "atom", input_size, output_size, num_units, name="Multiply01")
+
+    def normalize(self, vector):
+       
+        return torch.sigmoid(vector)
+
+    def execute_on_batch(self, batch, batch_lens=None):
+        assert len(batch.size()) == 2
+        predicted_function1 = self.submodules["function1"].execute_on_batch(batch)
+       
+
+        predicted_function2 = self.submodules["function2"].execute_on_batch(batch)
+        return self.normalize(predicted_function1) * self.normalize(predicted_function2)
 
 class AddFunction(LibraryFunction):
 

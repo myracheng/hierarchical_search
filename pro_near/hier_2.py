@@ -3,13 +3,12 @@
 Sample command:
 FOR MARS
 
-python3.8 hier_2.py --algorithm astar-near --exp_name mars_an --trial 1 \
+python3.8 hier_2.py --algorithm astar-near --exp_name time_lim_mars_an --trial 1 \
 --train_data ../near_code_7keypoints/data/MARS_data/mars_all_features_train_1.npz,../near_code_7keypoints/data/MARS_data/mars_all_features_train_2.npz \
 --valid_data ../near_code_7keypoints/data/MARS_data/mars_all_features_val.npz --test_data ../near_code_7keypoints/data/MARS_data/mars_all_features_test.npz \
 --train_labels "sniff" --input_type "list" --output_type "list" --input_size 316 --output_size 2 --num_labels 1 --lossfxn "crossentropy" \
 --normalize --max_depth 3 --max_num_units 4 --min_num_units 4 --max_num_children 6 --learning_rate 0.001 --neural_epochs 6 --symbolic_epochs 15 \
---class_weights "0.3,0.7" --base_program_name results/mars_an_astar-near_1_882748/fullprogram --hole_node_ind -1 --batch_size 256
-
+--class_weights "0.3,0.7" 
 FOR BASKETBALL
 
 base_program = CPU_Unpickler(open(filename, "rb")).load()
@@ -444,8 +443,8 @@ class Subtree_search():
         
 
         # Initialize program graph starting from trained NN
-        print("bp name")
-        print(self.base_program_name)
+        # print("bp name")
+        # print(self.base_program_name)
         program_graph = ProgramGraph(DSL_DICT, CUSTOM_EDGE_COSTS, near_input_type, near_output_type, near_input_size, near_output_size,
             self.max_num_units, self.min_num_units, self.max_num_children, self.max_depth, self.penalty, ite_beta=self.ite_beta)
 
@@ -551,6 +550,9 @@ if __name__ == '__main__':
         base_prog = 'program_%d.p'%i
         pickle.dump(progs[i],open(base_prog,"wb"))
         search_instance = Subtree_search(base_prog[:-2], **vars(args))
+        
         scores.append(search_instance.get_final_score())
-    np.save('scores.npy',np.array(scores))
+    now = datetime.now()
+    ts= str(datetime.timestamp(now)).split('.')[0][4:]
+    np.save('scores_%s.npy'%ts,np.array(scores))
         

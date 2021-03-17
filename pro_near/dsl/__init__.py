@@ -1,7 +1,7 @@
 # Default DSL
 from .neural_functions import HeuristicNeuralFunction, ListToListModule, ListToAtomModule, AtomToAtomModule, init_neural_function
 from .library_functions import StartFunction, LibraryFunction, MapFunction, MapPrefixesFunction, ITE, SimpleITE, \
-                                FoldFunction, FullInputAffineFunction, AddFunction, MultiplyFunction
+                                FoldFunction, FullInputAffineFunction, AddFunction, MultiplyFunction,Multiply01,SoftmaxFunction
 
 # Additional running average functions
 from .running_averages import RunningAverageFunction, RunningAverageLast5Function, RunningAverageLast10Function, \

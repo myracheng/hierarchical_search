@@ -90,7 +90,7 @@ class ASTAR_NEAR(ProgramLearningAlgorithm):
         #     os.makedirs(timestamp)
         elapsed = 0
 
-        while len(frontier) != 0:
+        while len(frontier) != 0 and elapsed <900:
             current_f_score, _, current = frontier.pop(0)
             log_and_print("CURRENT program has fscore {:.4f}: {}".format(
                 current_f_score, print_program(current.program, ignore_constants=(not verbose))))

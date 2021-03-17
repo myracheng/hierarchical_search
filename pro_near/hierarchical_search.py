@@ -8,7 +8,7 @@ python3.8 hierarchical_search.py --algorithm astar-near --exp_name mars_an --tri
 --valid_data ../near_code_7keypoints/data/MARS_data/mars_all_features_val.npz --test_data ../near_code_7keypoints/data/MARS_data/mars_all_features_test.npz \
 --train_labels "sniff" --input_type "list" --output_type "list" --input_size 316 --output_size 2 --num_labels 1 --lossfxn "crossentropy" \
 --normalize --max_depth 4 --max_num_units 4 --min_num_units 4 --max_num_children 8 --learning_rate 0.001 --neural_epochs 6 --symbolic_epochs 6 \
---class_weights "0.3,0.7" --base_program_name data/7keypoints/astar_1 --hole_node_ind -1 --batch_size 128
+--class_weights "0.3,0.7" --base_program_name data/7keypoints/astar_1 --hole_node_ind -1 --batch_size 128 --penalty 0
 
 FOR BASKETBALL
 
@@ -291,7 +291,7 @@ class Subtree_search():
         init_logging(self.save_path)
 
         visited_nodes = set() #dont visit smth thats already been visited
-
+        selected = {}
         num_iter = 10 #todo make this a parameter later
         for i in range(num_iter):
             
@@ -299,6 +299,7 @@ class Subtree_search():
             log_and_print("Base program performance:")
             self.evaluate_final()
             self.hole_node_ind = self.gnn_h()
+            
             self.hole_node = l[self.hole_node_ind]
             log_and_print("Node selected: %d" % self.hole_node_ind)
 

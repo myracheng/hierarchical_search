@@ -1,9 +1,9 @@
 """
-python3.8 train_mars.py --algorithm enumeration --exp_name mars_baby_an --trial 1 \
+python3.8 train_mars.py --algorithm astar-near --exp_name weight_d10 --trial 1 \
 --train_data data/MARS_data/mars_all_features_train_1.npz,data/MARS_data/mars_all_features_train_2.npz \
 --valid_data data/MARS_data/mars_all_features_val.npz --test_data data/MARS_data/mars_all_features_test.npz \
 --label "sniff" --input_type "list" --output_type "list" --input_size 316 --output_size 2 --num_labels 1 \
---lossfxn "crossentropy" --normalize --max_depth 14 --max_num_units 16 --min_num_units 6 --max_num_children 6 \
+--lossfxn "crossentropy" --normalize --max_depth 10 --max_num_units 16 --min_num_units 6 --max_num_children 6 \
 --learning_rate 0.001 --neural_epochs 8 --symbolic_epochs 10 --class_weights "0.3,0.7" --max_num_programs 3 \
 --batch_size 128 --penalty 0
 """

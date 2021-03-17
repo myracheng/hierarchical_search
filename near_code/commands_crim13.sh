@@ -73,8 +73,8 @@ python3.8 train.py \
 --symbolic_epochs 4 \
 --class_weights "1.0,1.5"
 
-python3 train.py \
---algorithm iddfs-near \
+python3.8 train.py \
+--algorithm astar-near \
 --exp_name crim13 \
 --trial 1 \
 --train_data data/crim13_processed/train_crim13_data.npy \
@@ -92,12 +92,10 @@ python3 train.py \
 --max_depth 10 \
 --frontier_capacity 8 \
 --initial_depth 5 \
---performance_multiplier 0.975 \
---depth_bias 0.95 \
 --learning_rate 0.001 \
 --neural_epochs 6 \
 --symbolic_epochs 15 \
---class_weights "1.0,1.5"
+--class_weights "1.0,1.5" --max_num_children 6
 
 python3 train.py \
 --algorithm mc-sampling \

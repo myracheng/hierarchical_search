@@ -12,7 +12,7 @@ DSL_DICT = {
                         dsl.basketball.BBallOffenseBallDistSelection,dsl.basketball.BBallOffenseBhDistSelection,
                         dsl.basketball.BBallOffenseBasketDistSelection,dsl.basketball.BBallDefenseBhDistSelection,
                         dsl.basketball.BBallOffensePaintSelection,
-                        BBallBhOneHotSelection,BBallScreenBhDistSelection,BBallScreenPaintSelection,BBallBallPaintSelection
+                        # BBallBhOneHotSelection,BBallScreenBhDistSelection,BBallScreenPaintSelection,BBallBallPaintSelection
 
                         ]
 }

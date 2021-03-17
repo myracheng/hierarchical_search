@@ -6,8 +6,10 @@ DEFAULT_BBALL_FEATURE_SUBSETS = {
     "ball"      : torch.LongTensor([0, 1]),
     "offense"   : torch.LongTensor(list(range(2,12))),
     "defense"   : torch.LongTensor(list(range(12,22))),
-    'offense_dist2ball': torch.LongTensor(list(range(22,27))),
-    'defense_dist2bh': torch.LongTensor(list(range(27,32))),
+     'offense_dist2ball': torch.LongTensor([22]),
+     'defense_dist2bh': torch.LongTensor([27]),
+    # 'offense_dist2ball': torch.LongTensor(list(range(22,27))),
+    # 'defense_dist2bh': torch.LongTensor(list(range(27,32))),
     'offense_dist2bh': torch.LongTensor(list(range(32,37))),
     'offense_dist2basket': torch.LongTensor(list(range(37,42))),
     'offense_paint': torch.LongTensor(list(range(42,47))), #binary

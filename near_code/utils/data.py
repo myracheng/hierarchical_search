@@ -5,7 +5,10 @@ from collections.abc import Iterable
 
 
 def flatten_batch(batch):
+    # print('hi')
+    # print(len(batch))
     if not isinstance(batch[0], Iterable) or len(batch[0]) == 1:
+        # print('o')
         return batch
     new_batch = []
     for traj_list in batch:

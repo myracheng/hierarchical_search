@@ -61,6 +61,7 @@ def execute_and_train(program, validset, trainset, train_config, output_type, ou
 
     # prepare validation set
     validation_input, validation_output = map(list, zip(*validset))
+    # print(torch.tensor(flatten_batch(validation_output)))
     validation_true_vals = torch.tensor(flatten_batch(validation_output)).float().to(device)
     # TODO a little hacky, but easiest solution for now
     if isinstance(lossfxn, nn.CrossEntropyLoss):

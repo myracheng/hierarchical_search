@@ -38,6 +38,7 @@ def process_batch(program, batch, output_type, output_size, device='cpu'):
     # print(device)
     batch_input = [torch.tensor(traj) for traj in batch]
     batch_padded, batch_lens = pad_minibatch(batch_input, num_features=batch_input[0].size(1))
+    # print(batch_lens)
     batch_padded = batch_padded.to(device)
     out_padded = program.execute_on_batch(batch_padded, batch_lens)
     if output_type == "list":
