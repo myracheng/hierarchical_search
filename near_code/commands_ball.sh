@@ -2,7 +2,7 @@
 #### 51
 
 python3.8 train.py \
---algorithm astar-near \
+--algorithm enumeration \
 --exp_name hmm \
 --trial 1 \
 --train_data data/helpers/allskip5/train_fullfeatures_2.npy \
@@ -306,3 +306,18 @@ python3.8 train.py \
 --min_num_units 4 \
 --penalty 0 \
 --class_weights "0.1,0.9"
+
+
+fruit-fly-dataset/bball_models/util/datasets/bball/helpers/allskip5
+
+python3.8 random_search.py --algorithm astar-near --exp_name bball --trial 1 \
+--train_data ../near_code/data/helpers/allskip5/train_fullfeatures.npy \
+--valid_data ../near_code/data/helpers/allskip5/test_fullfeatures.npy \
+--test_data ../near_code/data/helpers/allskip5/test_fullfeatures.npy \
+--train_labels ../near_code/data/helpers/allskip5/train_ballscreens.npy \
+--valid_labels ../near_code/data/helpers/allskip5/test_ballscreens.npy \
+--test_labels ../near_code/data/helpers/allskip5/test_ballscreens.npy \
+--normalize \
+--input_type "list" --output_type "list" --input_size 47 --output_size 2 --num_labels 1 --lossfxn "crossentropy" \
+--max_depth 4 --max_num_units 8 --min_num_units 4 --max_num_children 8 --learning_rate 0.001 --neural_epochs 6 --symbolic_epochs 10 \
+--class_weights "0.1,0.9" --base_program_name ../../hier_old_results/bball_astar-near_1_987088/fullprogram_4 \--batch_size 128 --frontier_capacity 8 --penalty 0 --hole_node_ind 9

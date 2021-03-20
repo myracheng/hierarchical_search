@@ -207,7 +207,9 @@ if __name__ == '__main__':
 
     # Run program learning algorithm
     best_programs = algorithm.run(program_graph, batched_trainset, validset, train_config, device)
-
+    if args.algorithm == "enumeration":
+        # Save best program
+        pickle.dump(best_program, open(os.path.join(save_path, "symb_prog_trained.pkl"), "wb"))
     if args.algorithm == "rnn":
         # special case for RNN baseline
         best_program = best_programs

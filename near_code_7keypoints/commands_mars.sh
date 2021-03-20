@@ -1,6 +1,6 @@
 python3.8 train_mars.py \
 --algorithm enumeration \
---exp_name mars_baby_an \
+--exp_name mars_depth8_an \
 --trial 1 \
 --train_data data/MARS_data/mars_all_features_train_1.npz,data/MARS_data/mars_all_features_train_2.npz \
 --valid_data data/MARS_data/mars_all_features_val.npz \

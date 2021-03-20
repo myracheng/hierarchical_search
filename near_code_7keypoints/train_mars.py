@@ -273,8 +273,9 @@ if __name__ == '__main__':
         # special case for RNN baseline
         best_program = best_programs
     elif args.algorithm == "enumeration":
-        for ind,item in enumerate(best_programs):
-            pickle.dump(item['program'], open(os.path.join(save_path, "program_%d.p"%ind), "wb"))
+        pickle.dump(best_program, open(os.path.join(save_path, "symb_prog_trained.pkl"), "wb"))
+        # for ind,item in enumerate(best_programs):
+            # pickle.dump(item['program'], open(os.path.join(save_path, "program_%d.p"%ind), "wb"))
     else:
         # Print all best programs found
         log_and_print("\n")

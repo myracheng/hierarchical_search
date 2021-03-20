@@ -7,11 +7,11 @@ DSL_DICT = {
                         dsl.running_averages.RunningAverageWindow13Function,
                         dsl.running_averages.RunningAverageWindow5Function],
     ('atom', 'atom') : [dsl.AddFunction, dsl.MultiplyFunction, dsl.SimpleITE,
-                        dsl.basketball_47.BBallBallSelection,dsl.basketball_47.BBallOffenseSelection,
-                        dsl.basketball_47.BBallDefenseSelection,
-                        dsl.basketball_47.BBallOffenseBallDistSelection,dsl.basketball_47.BBallOffenseBhDistSelection,
-                        dsl.basketball_47.BBallOffenseBasketDistSelection,dsl.basketball_47.BBallDefenseBhDistSelection,
-                        dsl.basketball_47.BBallOffensePaintSelection
+                        dsl.basketball47.BBallBallSelection,dsl.basketball47.BBallOffenseSelection,
+                        dsl.basketball47.BBallDefenseSelection,
+                        dsl.basketball47.BBallOffenseBallDistSelection,dsl.basketball47.BBallOffenseBhDistSelection,
+                        dsl.basketball47.BBallOffenseBasketDistSelection,dsl.basketball47.BBallDefenseBhDistSelection,
+                        dsl.basketball47.BBallOffensePaintSelection
                         ]
 }
 

@@ -11,7 +11,7 @@ python3 random_search.py --algorithm astar-near --exp_name crim13 --trial 1 --tr
 Sample command:
 cd pronear/pro_near
 
-python3.8 random_search.py --algorithm astar-near --exp_name mars_an --trial 1 \
+python3.8 random_search.py --algorithm astar-near --exp_name bball --trial 1 \
 --train_data ../near_code_7keypoints/data/MARS_data/mars_all_features_train_1.npz,../near_code_7keypoints/data/MARS_data/mars_all_features_train_2.npz \
 --valid_data ../near_code_7keypoints/data/MARS_data/mars_all_features_val.npz --test_data ../near_code_7keypoints/data/MARS_data/mars_all_features_test.npz \
 --train_labels "mount" --input_type "list" --output_type "list" --input_size 316 --output_size 2 --num_labels 1 --lossfxn "crossentropy" \
@@ -193,7 +193,7 @@ class Subtree_search():
             self.device = 'cpu'
         
         self.loss_weight = torch.tensor([float(w) for w in self.class_weights.split(',')]).to(self.device)
-        if self.exp_name == 'crim13':
+        if self.exp_name == 'crim13' or self.exp_name =='bball':
             # load input data
             self.train_data = np.load(self.train_data)
             self.test_data = np.load(self.test_data)
@@ -261,7 +261,8 @@ class Subtree_search():
         if self.device == 'cpu':
             self.base_program = CPU_Unpickler(open("%s.p" % self.base_program_name, "rb")).load()
         else:
-            self.base_program = pickle.load(open("%s.p" % self.base_program_name, "rb"))['program']
+            self.base_program = pickle.load(open("%s.p" % self.base_program_name, "rb"))
+            # ['program']
         print(self.base_program)
         
         base_folder = os.path.dirname(self.base_program_name)
@@ -571,6 +572,9 @@ if __name__ == '__main__':
     if args.exp_name == 'crim13':
         from dsl_crim13 import DSL_DICT, CUSTOM_EDGE_COSTS #todo change this import based on type
 
+    elif 'bball' in args.exp_name:
+        from dsl_bball_47 import DSL_DICT, CUSTOM_EDGE_COSTS
+    
     elif args.exp_name == 'mars_an':
         from dsl_mars import DSL_DICT, CUSTOM_EDGE_COSTS
         from dsl.mars import MARS_INDICES

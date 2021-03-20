@@ -165,12 +165,17 @@ class ProgramGraph(object):
                         data = child_node.program.submodules  
                         G = nx.Graph()
                         self.save_to_tree(data, G)
-                        child_node.gnn_score = eval_single_graph(G).cpu().detach().numpy()[0]
+                        # child_node.gnn_score = eval_single_graph(G).cpu().detach().numpy()[0]
                         all_children.append(child_node)
                         # if len(all_children) >= self.max_num_children and not in_enumeration:
                         #     return all_children
                     # once we've copied it, set current back to the original current
                     current.submodules[submod] = orig_fclass
+                    if len(all_children)%100 == 0:
+                            print("num programs is %d" % len(all_children))
+                    if len(all_children) >= 1000: #TODO remove debug
+                        return all_children
+
                     if not in_enumeration:
                         return all_children
                 else:

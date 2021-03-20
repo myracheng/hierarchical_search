@@ -3,9 +3,11 @@ import time
 import pickle
 from .core import ProgramLearningAlgorithm
 from program_graph import ProgramGraph
+import os
+
 from utils.logging import log_and_print, print_program, print_program_dict
 from utils.training import execute_and_train
-
+from datetime import datetime
 
 class ENUMERATION(ProgramLearningAlgorithm):
 
@@ -16,7 +18,7 @@ class ENUMERATION(ProgramLearningAlgorithm):
         assert isinstance(graph, ProgramGraph)
         symbolic_programs_trained = []
         symbolic_programs = []
-        enum_depth = 3
+        enum_depth = 8
         while len(symbolic_programs) < self.max_num_programs:
             print("DEBUG: starting enumerative synthesis with depth {}".format(enum_depth))
             symbolic_programs = self.enumerate2depth(graph, enum_depth)
@@ -29,7 +31,7 @@ class ENUMERATION(ProgramLearningAlgorithm):
         
         total_eval = min(self.max_num_programs, len(symbolic_programs))
         symbolic_programs.sort(key=lambda x: x["struct_cost"])
-        symbolic_programs = symbolic_programs[:total_eval]
+        # symbolic_programs = symbolic_programs[:total_eval]
 
         best_program = None
         best_total_cost = float('inf')
@@ -46,6 +48,9 @@ class ENUMERATION(ProgramLearningAlgorithm):
             score = execute_and_train(candidate, validset, trainset, train_config, 
                 graph.output_type, graph.output_size, neural=False, device=device)
             symbolic_programs_trained.append(prog_dict["program"])
+            now = datetime.now()
+            tss = str(datetime.timestamp(now)).split('.')[0][4:]
+            pickle.dump(prog_dict["program"], open(os.path.join('mars_progs', "program_%s.p"%tss), "wb"))
             total_cost = score + prog_dict["struct_cost"]
             log_and_print("Structural cost is {} with structural penalty {}".format(prog_dict["struct_cost"], graph.penalty))
             log_and_print("Time to train child {:.3f}".format(time.time()-child_start_time))
@@ -61,10 +66,10 @@ class ENUMERATION(ProgramLearningAlgorithm):
                 log_and_print("New BEST program found:")
                 print_program_dict(best_programs_list[-1])
 
-        pickle.dump(symbolic_programs_trained, open("symb_trained.pkl", "wb"))
-        return best_programs_list
+        # pickle.dump(symbolic_programs_trained, open("symb_trained.pkl", "wb"))
+        return symbolic_programs_trained
 
-    def enumerate2depth(self, graph, enumeration_depth):
+    def enumerate2depth(self, graph, enumeration_depth,max_num=10000):
         max_depth_copy = graph.max_depth
         graph.max_depth = enumeration_depth
         all_programs = []
@@ -81,7 +86,7 @@ class ENUMERATION(ProgramLearningAlgorithm):
                         "struct_cost" : program_node.cost,
                         "depth" : program_node.depth
                     })
-            elif program_node.depth < enumeration_depth:
+            elif program_node.depth < enumeration_depth and len(all_programs) < max_num:
                 all_children = graph.get_all_children(program_node, in_enumeration=True)
                 for childnode in all_children:
                     if not enumerated.get(print_program(childnode.program, ignore_constants=True)):

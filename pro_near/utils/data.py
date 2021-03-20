@@ -87,7 +87,8 @@ def normalize_data(train_data, valid_data, test_data):
             if np.isnan(seq_sum) or np.isinf(seq_sum):
                 print(seq)
         valid_data = np.reshape(valid_data_reshape, (-1, seq_len, input_dim))
-    return train_data.astype('float64'), valid_data.astype('float64'), test_data.astype('float64')
+        valid_data = valid_data.astype('float64')
+    return train_data.astype('float64'), valid_data, test_data.astype('float64')
 
 def create_minibatches(all_items, batch_size):
     num_items = len(all_items)
@@ -116,6 +117,9 @@ def create_minibatches(all_items, batch_size):
 
 def prepare_datasets(train_data, valid_data, test_data, train_labels, valid_labels, test_labels, normalize=True, train_valid_split=0.7, batch_size=32):
     if normalize:
+        # print(type(train_data))
+        # print(type(valid_data))
+        # print(type(test_data))
         train_data, valid_data, test_data = normalize_data(train_data, valid_data, test_data)
     print(train_data.dtype)
     trainset = dataset_tolists(train_data, train_labels) 

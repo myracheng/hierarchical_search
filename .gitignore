@@ -3,8 +3,11 @@ pro_near/data
 pro_near/results
 near_code*/results/*.p
 *results*
-pro_near/*.p
 pro_near/trees
 */*.pkl
 pro_near/trees_holes
 near_code_7keypoints/data
+*.npy
+near_code/bball_progs
+near_code_7keypoints/mars_progs
+*/__pycache__/*

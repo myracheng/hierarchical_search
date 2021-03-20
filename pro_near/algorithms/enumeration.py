@@ -1,6 +1,6 @@
 import copy
 import time
-
+import os
 from .core import ProgramLearningAlgorithm
 from program_graph import ProgramGraph
 from utils.logging import log_and_print, print_program, print_program_dict
@@ -63,7 +63,7 @@ class ENUMERATION(ProgramLearningAlgorithm):
             pickle.dump(symbolic_programs_trained, open("symb_trained.pkl", "wb"))
         return best_programs_list
 
-    def enumerate2depth(self, graph, enumeration_depth):
+    def enumerate2depth(self, graph, enumeration_depth,max_num=1000):
         max_depth_copy = graph.max_depth
         graph.max_depth = enumeration_depth
         all_programs = []
@@ -80,7 +80,7 @@ class ENUMERATION(ProgramLearningAlgorithm):
                         "struct_cost" : program_node.cost,
                         "depth" : program_node.depth
                     })
-            elif program_node.depth < enumeration_depth:
+            elif program_node.depth < enumeration_depth and len(all_programs) < max_num:
                 all_children = graph.get_all_children(program_node, in_enumeration=True)
                 for childnode in all_children:
                     if not enumerated.get(print_program(childnode.program, ignore_constants=True)):
